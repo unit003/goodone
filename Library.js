@@ -29,9 +29,9 @@ var NeatoLib = {
 			const updateLibrary = () => {
 				const vm = require("vm");
 
-				fetch("https://raw.githubusercontent.com/unit003/goodone/master/Library.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
+				fetch("https://raw.githubusercontent.com/Metalloriff/BetterDiscordPlugins/master/Lib/NeatoBurritoLibrary.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
 					let lib = new vm.Script(data, {
-						filename: "Library.js",
+						filename: "NeatoBurritoLibrary.js",
 						displayErrors: true
 					});
 
@@ -57,8 +57,8 @@ var NeatoLib = {
 	forceLibUpdate: function() {
 		const vm = require("vm");
 
-		fetch("https://raw.githubusercontent.com/unit003/goodone/master/Library.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
-			const lib = new vm.Script(data, { filename: "Library.js", displayErrors: true });
+		fetch("https://raw.githubusercontent.com/Metalloriff/BetterDiscordPlugins/master/Lib/NeatoBurritoLibrary.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
+			const lib = new vm.Script(data, { filename: "NeatoBurritoLibrary.js", displayErrors: true });
 
 			new Promise(e => e(lib.runInThisContext())).then(() => NeatoLib.showToast("Lib updated!", "success"));
 		});
