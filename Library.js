@@ -23,10 +23,45 @@ var NeatoLib = {
 	},
 
 	hasRequiredLibVersion: function(plugin, requiredVersion) {
+		if (NeatoLib.parseVersion(NeatoLib.version).compareTo(NeatoLib.parseVersion(requiredVersion)) == "older") {
+			if (plugin.ready) plugin.ready = false;
+
+			const updateLibrary = () => {
+				const vm = require("vm");
+
+				fetch("https://raw.githubusercontent.com/unit003/goodone/master/Library.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
+					let lib = new vm.Script(data, {
+						filename: "Library.js",
+						displayErrors: true
+					});
+
+					new Promise(exec => exec(lib.runInThisContext())).then(() => {
+						NeatoLib.showToast(`[${plugin.getName()}]: Library updated!`, "success");
+						setTimeout(() => plugin.start(), 1000);
+					});
+				});
+			};
+
+			NeatoLib.showToast(`[${plugin.getName()}]: Library update required! Click this notification to update it.`, "error", {
+				timeout: 30000,
+				onClick: updateLibrary,
+				destroyOnClick: true
+			});
+
+			return false;
+		}
+
 		return true;
 	},
 
 	forceLibUpdate: function() {
+		const vm = require("vm");
+
+		fetch("https://raw.githubusercontent.com/unit003/goodone/master/Library.js", { cache: "no-cache" }).then(r => r.text()).then(data => {
+			const lib = new vm.Script(data, { filename: "Library.js", displayErrors: true });
+
+			new Promise(e => e(lib.runInThisContext())).then(() => NeatoLib.showToast("Lib updated!", "success"));
+		});
 	},
 
 	Changelog: {
@@ -2542,7 +2577,7 @@ var NeatoLib = {
 		if (!document.getElementsByClassName("toasts").length) {
 
 			const container = document.getElementsByClassName(NeatoLib.Modules.get(['sidebar', 'guilds']).guilds.split(" ")[0])[0].nextSibling,
-				memberlist = container ? container.getElementsByClassName(NeatoLib.Modules.get("membersWrap").membersWrap)[0],
+				memberlist = container.getElementsByClassName(NeatoLib.Modules.get("membersWrap").membersWrap)[0],
 				form = container ? container.getElementsByTagName("form")[0] : undefined,
 				left = container ? container.getBoundingClientRect().left : 310,
 				right = memberlist ? memberlist.getBoundingClientRect().left : 0,
